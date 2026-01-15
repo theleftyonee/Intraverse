@@ -2417,12 +2417,109 @@ section[data-animate]:has(.animate-in) {
   .project-showcase-card {
     display: flex;
     flex-direction: column;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
+    gap: var(--spacing-lg);
+  }
+
+  .project-preview-section {
+    order: 1;
+    width: 100%;
+  }
+
+  .browser-mockup {
+    width: 100%;
+  }
+
+  .browser-header {
+    padding: 0.5rem 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .browser-dots {
+    gap: 0.4rem;
+  }
+
+  .browser-dots span {
+    width: 10px;
+    height: 10px;
+  }
+
+  .browser-url {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.75rem;
+    flex: 1;
+    min-width: 150px;
   }
 
   .browser-content {
-    height: 350px;
-    min-height: 350px;
+    height: 300px;
+    min-height: 300px;
+  }
+
+  .project-info-section {
+    order: 2;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: relative !important;
+    opacity: 1 !important;
+    transform: none !important;
+    border-left: none !important;
+    border-top: 1px solid var(--border-medium) !important;
+    border-radius: 0 !important;
+    margin-top: 0 !important;
+    padding: var(--spacing-lg) 0 0 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    overflow-y: visible !important;
+  }
+
+  .project-name {
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .project-tagline {
+    font-size: 0.95rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .project-description {
+    font-size: 0.875rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .project-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .metric-label {
+    font-size: 0.75rem;
+  }
+
+  .project-tech-stack {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .tech-tag {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .project-link-btn {
+    width: 100%;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.875rem;
   }
 
   .mobile-menu-btn {
@@ -2508,13 +2605,83 @@ section[data-animate]:has(.animate-in) {
     display: none;
   }
 
+  .testimonials-stacked-container {
+    padding: var(--spacing-xl) 0;
+    min-height: 400px;
+  }
+
   .testimonials-stacked-wrapper {
-    height: 450px;
+    height: auto;
+    min-height: 400px;
+    position: relative;
   }
 
   .testimonial-stacked-card {
-    max-width: 90%;
-    padding: var(--spacing-xl);
+    max-width: 95%;
+    padding: var(--spacing-lg) !important;
+    position: relative !important;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    margin-bottom: var(--spacing-lg);
+    display: none;
+  }
+
+  .testimonial-stacked-card.active {
+    display: block;
+    transform: translateX(0) translateY(0) scale(1) !important;
+    z-index: 10;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .testimonial-stacked-card.next,
+  .testimonial-stacked-card.prev,
+  .testimonial-stacked-card.hidden {
+    display: none !important;
+  }
+
+  .testimonial-card-content {
+    padding: var(--spacing-lg) !important;
+  }
+
+  .testimonial-quote-icon {
+    font-size: 4rem !important;
+    top: var(--spacing-md) !important;
+    left: var(--spacing-md) !important;
+  }
+
+  .testimonial-text-stacked {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: var(--spacing-md) !important;
+  }
+
+  .testimonial-text-stacked::before,
+  .testimonial-text-stacked::after {
+    font-size: 3rem !important;
+  }
+
+  .author-avatar-stacked {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 1.25rem !important;
+  }
+
+  .author-name-stacked {
+    font-size: 1rem !important;
+  }
+
+  .author-role-stacked {
+    font-size: 0.875rem !important;
+  }
+
+  .testimonial-stars {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .testimonial-stars svg {
+    width: 16px;
+    height: 16px;
   }
 
   .section-header {
@@ -2590,7 +2757,7 @@ section[data-animate]:has(.animate-in) {
   }
 
   .projects-carousel-container {
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--spacing-sm);
   }
 
   .projects-carousel-wrapper {
@@ -2598,34 +2765,26 @@ section[data-animate]:has(.animate-in) {
   }
 
   .project-carousel-btn {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .project-carousel-btn.prev {
-    left: -5px;
+    left: 5px;
+    z-index: 20;
   }
 
   .project-carousel-btn.next {
-    right: -5px;
+    right: 5px;
+    z-index: 20;
   }
 
-  .project-info-section {
-    width: 100%;
-    max-width: 100%;
-    position: relative;
-    opacity: 1;
-    transform: translateX(0);
-    border-left: none;
-    border-top: 1px solid var(--border-accent);
-    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-    margin-top: var(--spacing-lg);
-    padding-top: var(--spacing-xl);
-  }
-
-  .project-showcase-card {
-    display: flex;
-    flex-direction: column;
+  .project-carousel-indicators {
+    margin-top: var(--spacing-md);
+    gap: 0.5rem;
+    padding: 0 var(--spacing-md);
   }
 
   .browser-content {
