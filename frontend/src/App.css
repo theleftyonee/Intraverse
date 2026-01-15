@@ -83,11 +83,18 @@ body {
   overflow-x: hidden;
   position: relative;
   cursor: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 @media (max-width: 768px) {
   body {
     cursor: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
   }
 }
 
@@ -2120,7 +2127,257 @@ section[data-animate]:has(.animate-in) {
   }
 }
 
+/* Mobile Optimizations */
+@media (max-width: 480px) {
+  :root {
+    --spacing-xs: 0.375rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 2.5rem;
+    --spacing-3xl: 3rem;
+  }
+
+  .section-container {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .hero-section {
+    min-height: 90vh;
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .hero-title {
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-lg);
+    padding: 0 var(--spacing-sm);
+  }
+
+  .hero-badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 1rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .section-title {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+
+  .section-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    min-height: 44px; /* Better touch target */
+  }
+
+  .stat-card {
+    padding: var(--spacing-md);
+  }
+
+  .stat-value {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+  }
+
+  .service-card {
+    padding: var(--spacing-lg);
+  }
+
+  .service-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .service-title {
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .service-description {
+    font-size: 0.875rem;
+  }
+
+  .step-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .step-title {
+    font-size: 1.1rem;
+  }
+
+  .step-description {
+    font-size: 0.875rem;
+  }
+
+  .browser-content {
+    height: 300px;
+    min-height: 300px;
+  }
+
+  .project-title {
+    font-size: 1.25rem;
+  }
+
+  .project-description {
+    font-size: 0.875rem;
+  }
+
+  .testimonials-stacked-wrapper {
+    height: 400px;
+  }
+
+  .testimonial-stacked-card {
+    max-width: 95%;
+    padding: var(--spacing-lg);
+  }
+
+  .testimonial-quote {
+    font-size: 0.9rem;
+  }
+
+  .testimonial-author-name {
+    font-size: 0.875rem;
+  }
+
+  .testimonial-author-role {
+    font-size: 0.75rem;
+  }
+
+  .cta-title {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+
+  .cta-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .footer {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .footer-content {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    text-align: center;
+  }
+
+  .footer-section {
+    width: 100%;
+  }
+
+  .footer-title {
+    font-size: 1rem;
+  }
+
+  .footer-links {
+    font-size: 0.875rem;
+  }
+
+  .navbar {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .logo-text {
+    font-size: 1.1rem;
+  }
+
+  .project-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .metric-label {
+    font-size: 0.75rem;
+  }
+
+  .project-carousel-indicators {
+    bottom: 10px;
+  }
+
+  .project-carousel-indicator {
+    width: 8px;
+    height: 8px;
+  }
+
+  .browser-header {
+    padding: var(--spacing-sm);
+  }
+
+  .browser-dots {
+    gap: 0.4rem;
+  }
+
+  .browser-dots span {
+    width: 8px;
+    height: 8px;
+  }
+
+  .browser-url {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .navbar {
+    height: 60px;
+  }
+
+  .logo-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .highlight-word {
+    font-size: inherit;
+  }
+
+  .orb-1,
+  .orb-2,
+  .orb-3 {
+    display: none; /* Hide decorative orbs on mobile for performance */
+  }
+
+  .grid-pattern {
+    opacity: 0.2; /* Reduce pattern opacity on mobile */
+  }
+}
+
 @media (max-width: 768px) {
+  .section-container {
+    padding: var(--spacing-2xl) var(--spacing-md);
+  }
+
+  .hero-section {
+    padding: var(--spacing-2xl) var(--spacing-md);
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  }
+
   .projects-carousel-container {
     padding: 0 var(--spacing-md);
   }
@@ -2132,6 +2389,8 @@ section[data-animate]:has(.animate-in) {
   .project-carousel-btn {
     width: 48px;
     height: 48px;
+    min-width: 48px; /* Better touch target */
+    min-height: 48px;
   }
 
   .project-carousel-btn.prev {
@@ -2158,6 +2417,7 @@ section[data-animate]:has(.animate-in) {
   .project-showcase-card {
     display: flex;
     flex-direction: column;
+    padding: var(--spacing-lg);
   }
 
   .browser-content {
@@ -2167,6 +2427,8 @@ section[data-animate]:has(.animate-in) {
 
   .mobile-menu-btn {
     display: block;
+    min-width: 44px; /* Better touch target */
+    min-height: 44px;
   }
 
   .nav-links {
@@ -2181,37 +2443,65 @@ section[data-animate]:has(.animate-in) {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     border-bottom: 1px solid var(--border-subtle);
+    z-index: 999;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
   }
 
   .nav-links.active {
     transform: translateX(0);
   }
 
+  .nav-links a {
+    padding: var(--spacing-sm) 0;
+    min-height: 44px; /* Better touch target */
+    display: flex;
+    align-items: center;
+  }
+
   .nav-links .btn-primary {
     width: 100%;
     justify-content: center;
+    min-height: 44px;
   }
 
   .hero-cta-group {
     flex-direction: column;
+    gap: var(--spacing-md);
   }
 
   .hero-cta-group .btn-primary,
   .hero-cta-group .btn-secondary {
     width: 100%;
     justify-content: center;
+    min-height: 44px;
   }
 
   .services-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
   }
 
   .process-timeline {
     grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  @media (max-width: 480px) {
+    .stats-container {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-sm);
+    }
   }
 
   .project-metrics-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
   }
 
   .carousel-btn {
@@ -2224,7 +2514,50 @@ section[data-animate]:has(.animate-in) {
 
   .testimonial-stacked-card {
     max-width: 90%;
+    padding: var(--spacing-xl);
   }
+
+  .section-header {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+  }
+
+  .section-subtitle {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+  }
+
+  /* Better touch targets for interactive elements */
+  button,
+  a,
+  .btn-primary,
+  .btn-secondary,
+  .project-carousel-btn {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+    touch-action: manipulation;
+  }
+
+  /* Prevent text selection on buttons */
+  .btn-primary,
+  .btn-secondary,
+  .project-carousel-btn {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Smooth scrolling on mobile */
+  .landing-page {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Optimize animations on mobile */
+  * {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
 
   .testimonial-stacked-card.next {
     transform: translateX(40px) translateY(15px) scale(0.8) rotateY(-10deg);
