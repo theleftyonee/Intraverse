@@ -116,8 +116,10 @@ const Home = () => {
       mouseX = e.clientX;
       mouseY = e.clientY;
       setCursorPosition({ x: e.clientX, y: e.clientY });
+      startAnimation();
     };
 
+    let animationId = null;
     const animateCursor = () => {
       // Smooth cursor movement
       cursorX += (mouseX - cursorX) * 0.15;
@@ -128,16 +130,23 @@ const Home = () => {
       followerY += (mouseY - followerY) * 0.08;
       
       if (cursorRef.current) {
-        cursorRef.current.style.left = `${cursorX}px`;
-        cursorRef.current.style.top = `${cursorY}px`;
+        cursorRef.current.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
       }
       
       if (cursorFollowerRef.current) {
-        cursorFollowerRef.current.style.left = `${followerX}px`;
-        cursorFollowerRef.current.style.top = `${followerY}px`;
+        cursorFollowerRef.current.style.transform = `translate(${followerX}px, ${followerY}px)`;
       }
       
-      requestAnimationFrame(animateCursor);
+      // Only continue animation if there's movement
+      if (Math.abs(mouseX - cursorX) > 0.1 || Math.abs(mouseY - cursorY) > 0.1) {
+        animationId = requestAnimationFrame(animateCursor);
+      }
+    };
+    
+    const startAnimation = () => {
+      if (!animationId) {
+        animationId = requestAnimationFrame(animateCursor);
+      }
     };
 
     const handleMouseEnter = () => setIsHovering(true);
@@ -166,15 +175,18 @@ const Home = () => {
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.addEventListener('mouseenter', handleMouseEnter);
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
     
-    animateCursor();
+    startAnimation();
 
     return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
       window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);
@@ -192,11 +204,15 @@ const Home = () => {
   };
 
   const nextProject = () => {
-    setCurrentProject((prev) => (prev + 1) % projects.length);
+    requestAnimationFrame(() => {
+      setCurrentProject((prev) => (prev + 1) % projects.length);
+    });
   };
 
   const prevProject = () => {
-    setCurrentProject((prev) => (prev - 1 + projects.length) % projects.length);
+    requestAnimationFrame(() => {
+      setCurrentProject((prev) => (prev - 1 + projects.length) % projects.length);
+    });
   };
 
   const scrollToSection = (id) => {
@@ -410,10 +426,11 @@ const Home = () => {
                         <div className="browser-content">
                           <iframe
                             ref={(el) => (iframeRefs.current[project.id] = el)}
-                            src={project.url}
+                            src={currentProject === projects.indexOf(project) ? project.url : undefined}
                             title={project.name}
                             className="project-iframe"
                             loading="lazy"
+                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                           />
                         </div>
                       </div>
