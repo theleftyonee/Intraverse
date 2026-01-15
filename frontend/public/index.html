@@ -18,35 +18,67 @@
         work correctly both with client-side routing and a non-root public URL.
         Learn how to configure a non-root public URL by running `npm run build`.
         -->
-        <title>Emergent | Fullstack App</title>
-        <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
-        <!--
-        These two scripts have been added for the Visual Edits, please do not edit or remove them
-        -->
+        <title>Intraverse Tech | Fullstack App</title>
         <script>
-            // Only load visual edit scripts when inside an iframe
-            if (window.self !== window.top) {
-                // Load debug monitor script
-                var debugMonitorScript = document.createElement('script');
-                debugMonitorScript.src = 'https://assets.emergent.sh/scripts/debug-monitor.js';
-                document.head.appendChild(debugMonitorScript);
-
-                // Configure Tailwind
-                window.tailwind = window.tailwind || {};
-                tailwind.config = {
-                    corePlugins: { preflight: false },
+            // Prevent Emergent badge from appearing
+            (function() {
+                const removeBadge = () => {
+                    const badge = document.getElementById('emergent-badge');
+                    if (badge) badge.remove();
+                    document.querySelectorAll('[id*="emergent"], [class*="emergent-badge"]').forEach(el => {
+                        if (el.textContent?.includes('Emergent') || el.id === 'emergent-badge') {
+                            el.remove();
+                        }
+                    });
                 };
-
-                // Load Tailwind CDN
-                var tailwindScript = document.createElement('script');
-                tailwindScript.src = 'https://cdn.tailwindcss.com';
-                document.head.appendChild(tailwindScript);
-            }
+                // Run immediately and on DOM ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', removeBadge);
+                } else {
+                    removeBadge();
+                }
+                // Also check periodically
+                setInterval(removeBadge, 100);
+            })();
         </script>
     </head>
-    <body>
+    <body class="dark">
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root"></div>
+        <script>
+            // Aggressively remove Emergent badge
+            (function() {
+                const removeBadge = () => {
+                    // Remove by ID
+                    const badge = document.getElementById('emergent-badge');
+                    if (badge) {
+                        badge.style.display = 'none';
+                        badge.remove();
+                    }
+                    // Remove by any selector
+                    document.querySelectorAll('a[href*="emergent"], [id*="emergent"], [class*="emergent"]').forEach(el => {
+                        if (el.textContent?.includes('Emergent') || el.textContent?.includes('Made with')) {
+                            el.style.display = 'none';
+                            el.remove();
+                        }
+                    });
+                };
+                
+                // Run multiple times to catch dynamic creation
+                removeBadge();
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', removeBadge);
+                }
+                setTimeout(removeBadge, 100);
+                setTimeout(removeBadge, 500);
+                setTimeout(removeBadge, 1000);
+                setInterval(removeBadge, 200);
+                
+                // Watch for new elements
+                const observer = new MutationObserver(removeBadge);
+                observer.observe(document.body, { childList: true, subtree: true });
+            })();
+        </script>
         <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -57,53 +89,6 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-        <a
-            id="emergent-badge"
-            target="_blank"
-            href="https://app.emergent.sh/?utm_source=emergent-badge"
-            style="
-                display: flex !important;
-                align-items: center !important;
-                position: fixed !important;
-                bottom: 20px;
-                right: 20px;
-                text-decoration: none;
-                padding: 6px 10px;
-                font-family: -apple-system, BlinkMacSystemFont,
-                    &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu, Cantarell,
-                    &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;,
-                    sans-serif !important;
-                font-size: 12px !important;
-                z-index: 9999 !important;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-                border-radius: 8px !important;
-                background-color: #ffffff !important;
-                border: 1px solid rgba(255, 255, 255, 0.25) !important;
-            "
-        >
-            <div
-                style="display: flex; flex-direction: row; align-items: center"
-            >
-                <img
-                    style="width: 20px; height: 20px; margin-right: 8px"
-                    src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4"
-                />
-                <p
-                    style="
-                        color: #000000;
-                        font-family: -apple-system, BlinkMacSystemFont,
-                            &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu,
-                            Cantarell, &quot;Open Sans&quot;,
-                            &quot;Helvetica Neue&quot;, sans-serif !important;
-                        font-size: 12px !important;
-                        align-items: center;
-                        margin-bottom: 0;
-                    "
-                >
-                    Made with Emergent
-                </p>
-            </div>
-        </a>
         <script>
             !(function (t, e) {
                 var o, n, p, r;

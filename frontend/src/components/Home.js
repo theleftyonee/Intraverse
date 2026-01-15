@@ -6,6 +6,7 @@ import {
   Sparkles, Zap, TrendingUp, Users
 } from 'lucide-react';
 import { services, projects, testimonials, stats, processSteps } from '../mock';
+import { Card, CardContent } from './ui/card';
 
 const iconMap = {
   Globe, Smartphone, LayoutDashboard, Brain, Code2, Palette,
@@ -14,9 +15,17 @@ const iconMap = {
 
 const Home = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [currentProject, setCurrentProject] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [visibleSections, setVisibleSections] = useState(new Set());
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
   const iframeRefs = useRef({});
+  const sectionRefs = useRef({});
+  const cursorRef = useRef(null);
+  const cursorFollowerRef = useRef(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,12 +34,169 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Scroll detection for navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Remove Emergent watermark
+  useEffect(() => {
+    const removeWatermark = () => {
+      const badge = document.getElementById('emergent-badge');
+      if (badge) {
+        badge.remove();
+      }
+      // Also check for any dynamically created badges
+      const allBadges = document.querySelectorAll('[id*="emergent"], [class*="emergent"]');
+      allBadges.forEach((el) => {
+        if (el.id === 'emergent-badge' || el.textContent?.includes('Emergent')) {
+          el.remove();
+        }
+      });
+    };
+
+    // Remove immediately
+    removeWatermark();
+    
+    // Also check periodically in case it's added dynamically
+    const interval = setInterval(removeWatermark, 100);
+    
+    // Use MutationObserver to catch dynamically added elements
+    const observer = new MutationObserver(removeWatermark);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      clearInterval(interval);
+      observer.disconnect();
+    };
+  }, []);
+
+  // Intersection Observer for scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+            // Animate child elements
+            const cards = entry.target.querySelectorAll('.stat-card, .service-card, .process-step');
+            cards.forEach((card, index) => {
+              setTimeout(() => {
+                card.classList.add('animate-in');
+              }, index * 100);
+            });
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -100px 0px' }
+    );
+
+    const sections = document.querySelectorAll('[data-animate]');
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+    };
+  }, []);
+
+  // Custom cursor tracking with smooth animation
+  useEffect(() => {
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+    let followerX = 0;
+    let followerY = 0;
+
+    const handleMouseMove = (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      setCursorPosition({ x: e.clientX, y: e.clientY });
+    };
+
+    const animateCursor = () => {
+      // Smooth cursor movement
+      cursorX += (mouseX - cursorX) * 0.15;
+      cursorY += (mouseY - cursorY) * 0.15;
+      
+      // Smooth follower movement (slower)
+      followerX += (mouseX - followerX) * 0.08;
+      followerY += (mouseY - followerY) * 0.08;
+      
+      if (cursorRef.current) {
+        cursorRef.current.style.left = `${cursorX}px`;
+        cursorRef.current.style.top = `${cursorY}px`;
+      }
+      
+      if (cursorFollowerRef.current) {
+        cursorFollowerRef.current.style.left = `${followerX}px`;
+        cursorFollowerRef.current.style.top = `${followerY}px`;
+      }
+      
+      requestAnimationFrame(animateCursor);
+    };
+
+    const handleMouseEnter = () => setIsHovering(true);
+    const handleMouseLeave = () => setIsHovering(false);
+
+    // Check for interactive elements
+    const handleMouseOver = (e) => {
+      const target = e.target;
+      if (target.tagName === 'BUTTON' || target.tagName === 'A' || 
+          target.closest('button') || target.closest('a') ||
+          target.closest('.project-showcase-card') || target.closest('.service-card')) {
+        setIsHovering(true);
+        if (cursorRef.current) cursorRef.current.classList.add('cursor-hover');
+        if (cursorFollowerRef.current) cursorFollowerRef.current.classList.add('cursor-hover');
+      }
+    };
+
+    const handleMouseOut = (e) => {
+      const target = e.target;
+      if (target.tagName === 'BUTTON' || target.tagName === 'A' || 
+          target.closest('button') || target.closest('a') ||
+          target.closest('.project-showcase-card') || target.closest('.service-card')) {
+        setIsHovering(false);
+        if (cursorRef.current) cursorRef.current.classList.remove('cursor-hover');
+        if (cursorFollowerRef.current) cursorFollowerRef.current.classList.remove('cursor-hover');
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseenter', handleMouseEnter);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
+    
+    animateCursor();
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
+    };
+  }, []);
+
   const nextTestimonial = () => {
     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
   };
 
   const prevTestimonial = () => {
     setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  const nextProject = () => {
+    setCurrentProject((prev) => (prev + 1) % projects.length);
+  };
+
+  const prevProject = () => {
+    setCurrentProject((prev) => (prev - 1 + projects.length) % projects.length);
   };
 
   const scrollToSection = (id) => {
@@ -43,8 +209,19 @@ const Home = () => {
 
   return (
     <div className="landing-page">
+      {/* Custom Cursor */}
+      <div className="custom-cursor" ref={cursorRef}></div>
+      <div className="cursor-follower" ref={cursorFollowerRef}></div>
+      <div 
+        className="cursor-background-effect"
+        style={{
+          left: `${cursorPosition.x}px`,
+          top: `${cursorPosition.y}px`,
+          opacity: isHovering ? 0.3 : 0.1
+        }}
+      ></div>
       {/* Navigation */}
-      <nav className="navbar">
+      <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
         <div className="nav-container">
           <div className="nav-logo">
             <Sparkles size={20} className="logo-icon" />
@@ -84,13 +261,13 @@ const Home = () => {
           <h1 className="hero-title">
             BUILD YOUR NEXT
             <br />
-            <span className="hero-title-gradient">BIG IDEA</span>
+            <span className="hero-title-gradient highlight-word">BIG IDEA</span>
             <br />
-            IN JUST 7 DAYS
+            IN JUST <span className="highlight-word">7 DAYS</span>
           </h1>
           <p className="hero-subtitle">
-            Transform your vision into reality with cutting-edge technology.
-            We deliver enterprise-grade solutions at startup speed.
+            Transform your <span className="highlight-word">vision</span> into reality with cutting-edge <span className="highlight-word">technology</span>.
+            We deliver <span className="highlight-word">enterprise-grade</span> solutions at startup speed.
           </p>
           <div className="hero-cta-group">
             <button className="btn-primary btn-large" onClick={() => scrollToSection('contact')}>
@@ -104,7 +281,7 @@ const Home = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="stats-section">
+      <section id="stats" className="stats-section" data-animate>
         <div className="stats-container">
           {stats.map((stat) => (
             <div key={stat.id} className="stat-card">
@@ -122,13 +299,13 @@ const Home = () => {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="services-section">
+      <section id="services" className="services-section" data-animate>
         <div className="section-container">
           <div className="section-header">
             <div className="section-badge">What We Do</div>
-            <h2 className="section-title">Services We Offer</h2>
+            <h2 className="section-title">Services We <span className="highlight-word">Offer</span></h2>
             <p className="section-subtitle">
-              Comprehensive tech solutions tailored to your business needs
+              Comprehensive <span className="highlight-word">tech solutions</span> tailored to your business needs
             </p>
           </div>
 
@@ -157,13 +334,13 @@ const Home = () => {
       </section>
 
       {/* Process Section */}
-      <section id="process" className="process-section">
+      <section id="process" className="process-section" data-animate>
         <div className="section-container">
           <div className="section-header">
             <div className="section-badge">How We Work</div>
-            <h2 className="section-title">Our Process</h2>
+            <h2 className="section-title">Our <span className="highlight-word">Process</span></h2>
             <p className="section-subtitle">
-              A streamlined approach from concept to launch
+              A <span className="highlight-word">streamlined</span> approach from concept to launch
             </p>
           </div>
 
@@ -193,127 +370,183 @@ const Home = () => {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="projects-section">
+      <section id="projects" className="projects-section" data-animate>
         <div className="section-container">
           <div className="section-header">
             <div className="section-badge">Our Work</div>
-            <h2 className="section-title">Featured Projects</h2>
+            <h2 className="section-title">Featured <span className="highlight-word">Projects</span></h2>
             <p className="section-subtitle">
-              Explore live projects and interact with them directly
+              Explore <span className="highlight-word">live projects</span> and interact with them directly
             </p>
           </div>
 
-          <div className="projects-showcase">
-            {projects.map((project) => (
-              <div key={project.id} className="project-showcase-card">
-                <div className="project-preview-section">
-                  <div className="browser-mockup">
-                    <div className="browser-header">
-                      <div className="browser-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+          <div className="projects-carousel-container">
+            <button className="project-carousel-btn prev" onClick={prevProject} aria-label="Previous project">
+              <ChevronLeft size={28} />
+            </button>
+
+            <div className="projects-carousel-wrapper">
+              <div 
+                className="projects-carousel-track"
+                style={{
+                  transform: `translateX(-${currentProject * 100}%)`
+                }}
+              >
+                {projects.map((project) => (
+                  <div key={project.id} className="project-showcase-card">
+                    <div className="project-preview-section">
+                      <div className="browser-mockup">
+                        <div className="browser-header">
+                          <div className="browser-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                          <div className="browser-url">{project.url}</div>
+                          <a href={project.url} target="_blank" rel="noopener noreferrer" className="browser-external">
+                            <ExternalLink size={16} />
+                          </a>
+                        </div>
+                        <div className="browser-content">
+                          <iframe
+                            ref={(el) => (iframeRefs.current[project.id] = el)}
+                            src={project.url}
+                            title={project.name}
+                            className="project-iframe"
+                            loading="lazy"
+                          />
+                        </div>
                       </div>
-                      <div className="browser-url">{project.url}</div>
-                      <a href={project.url} target="_blank" rel="noopener noreferrer" className="browser-external">
-                        <ExternalLink size={16} />
+                    </div>
+
+                    <div className="project-info-section">
+                      <div className="project-category-badge">
+                        <Sparkles size={14} />
+                        {project.category}
+                      </div>
+                      
+                      <h3 className="project-name">{project.name}</h3>
+                      <p className="project-tagline">{project.tagline}</p>
+                      <p className="project-description">{project.description}</p>
+                      
+                      <div className="project-metrics-grid">
+                        {Object.entries(project.metrics).map(([key, value]) => (
+                          <div key={key} className="metric-item">
+                            <div className="metric-value">{value}</div>
+                            <div className="metric-label">{key}</div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="project-tech-stack">
+                        {project.technologies.map((tech, idx) => (
+                          <span key={idx} className="tech-tag">{tech}</span>
+                        ))}
+                      </div>
+
+                      <a href={project.url} target="_blank" rel="noopener noreferrer" className="project-link-btn">
+                        Visit Live Site <ExternalLink size={18} />
                       </a>
                     </div>
-                    <div className="browser-content">
-                      <iframe
-                        ref={(el) => (iframeRefs.current[project.id] = el)}
-                        src={project.url}
-                        title={project.name}
-                        className="project-iframe"
-                        loading="lazy"
-                      />
-                    </div>
                   </div>
-                </div>
-
-                <div className="project-info-section">
-                  <div className="project-category-badge">
-                    <Sparkles size={14} />
-                    {project.category}
-                  </div>
-                  
-                  <h3 className="project-name">{project.name}</h3>
-                  <p className="project-tagline">{project.tagline}</p>
-                  <p className="project-description">{project.description}</p>
-                  
-                  <div className="project-metrics-grid">
-                    {Object.entries(project.metrics).map(([key, value]) => (
-                      <div key={key} className="metric-item">
-                        <div className="metric-value">{value}</div>
-                        <div className="metric-label">{key}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="project-tech-stack">
-                    {project.technologies.map((tech, idx) => (
-                      <span key={idx} className="tech-tag">{tech}</span>
-                    ))}
-                  </div>
-
-                  <a href={project.url} target="_blank" rel="noopener noreferrer" className="project-link-btn">
-                    Visit Live Site <ExternalLink size={18} />
-                  </a>
-                </div>
+                ))}
               </div>
+            </div>
+
+            <button className="project-carousel-btn next" onClick={nextProject} aria-label="Next project">
+              <ChevronRight size={28} />
+            </button>
+          </div>
+
+          <div className="project-carousel-indicators">
+            {projects.map((_, index) => (
+              <button
+                key={index}
+                className={`project-indicator ${index === currentProject ? 'active' : ''}`}
+                onClick={() => setCurrentProject(index)}
+                aria-label={`Go to project ${index + 1}`}
+              />
             ))}
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="testimonials-section">
+      <section id="testimonials" className="testimonials-section" data-animate>
         <div className="section-container">
           <div className="section-header">
             <div className="section-badge">Testimonials</div>
-            <h2 className="section-title">What Clients Say</h2>
+            <h2 className="section-title">What <span className="highlight-word">Clients</span> Say</h2>
             <p className="section-subtitle">
-              Real feedback from real clients
+              Real <span className="highlight-word">feedback</span> from real clients
             </p>
           </div>
 
-          <div className="testimonial-carousel">
-            <button className="carousel-btn prev" onClick={prevTestimonial}>
-              <ChevronLeft size={24} />
-            </button>
+          <div className="testimonials-stacked-container">
+            <div className="testimonials-stacked-wrapper">
+              {testimonials.map((testimonial, index) => {
+                const position = index - currentTestimonial;
+                const isActive = position === 0;
+                const isNext = position === 1;
+                const isPrev = position === -1;
+                const isHidden = Math.abs(position) > 1;
 
-            <div className="testimonial-content">
-              <div className="quote-icon">"</div>
-              <div className="stars">
-                {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                  <Star key={i} size={18} fill="#FFD700" stroke="#FFD700" />
-                ))}
-              </div>
-              <p className="testimonial-text">{testimonials[currentTestimonial].content}</p>
-              <div className="testimonial-author">
-                <div className="author-avatar">
-                  {testimonials[currentTestimonial].name.charAt(0)}
-                </div>
-                <div className="author-info">
-                  <div className="author-name">{testimonials[currentTestimonial].name}</div>
-                  <div className="author-role">{testimonials[currentTestimonial].role}</div>
-                </div>
-              </div>
+                return (
+                  <Card
+                    key={testimonial.id}
+                    className={`testimonial-stacked-card ${
+                      isActive ? 'active' : ''
+                    } ${isNext ? 'next' : ''} ${isPrev ? 'prev' : ''} ${
+                      isHidden ? 'hidden' : ''
+                    }`}
+                    style={{
+                      '--position': position,
+                      '--abs-position': Math.abs(position)
+                    }}
+                    onClick={() => !isActive && setCurrentTestimonial(index)}
+                  >
+                    <CardContent className="testimonial-card-content">
+                      <div className="testimonial-quote-icon">
+                        "
+                      </div>
+                      <div className="testimonial-stars">
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <Star key={i} size={20} fill="#ffffff" stroke="#ffffff" />
+                        ))}
+                      </div>
+                      <p className="testimonial-text-stacked">{testimonial.content}</p>
+                      <div className="testimonial-author-stacked">
+                        <div className="author-avatar-stacked">
+                          {testimonial.name.charAt(0)}
+                        </div>
+                        <div className="author-info-stacked">
+                          <div className="author-name-stacked">{testimonial.name}</div>
+                          <div className="author-role-stacked">{testimonial.role}</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
 
-            <button className="carousel-btn next" onClick={nextTestimonial}>
-              <ChevronRight size={24} />
-            </button>
-          </div>
-
-          <div className="carousel-indicators">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                className={`indicator ${index === currentTestimonial ? 'active' : ''}`}
-                onClick={() => setCurrentTestimonial(index)}
-              />
-            ))}
+            <div className="testimonials-controls">
+              <button className="carousel-btn-stacked prev" onClick={prevTestimonial}>
+                <ChevronLeft size={24} />
+              </button>
+              <div className="carousel-indicators-stacked">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`indicator-stacked ${index === currentTestimonial ? 'active' : ''}`}
+                    onClick={() => setCurrentTestimonial(index)}
+                  />
+                ))}
+              </div>
+              <button className="carousel-btn-stacked next" onClick={nextTestimonial}>
+                <ChevronRight size={24} />
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -325,9 +558,9 @@ const Home = () => {
         </div>
         <div className="cta-container">
           <Rocket size={48} className="cta-icon" />
-          <h2 className="cta-title">Ready to Build Something Amazing?</h2>
+          <h2 className="cta-title">Ready to Build Something <span className="highlight-word">Amazing</span>?</h2>
           <p className="cta-subtitle">
-            Let's turn your vision into reality. Schedule a free consultation today.
+            Let's turn your <span className="highlight-word">vision</span> into reality. Schedule a free <span className="highlight-word">consultation</span> today.
           </p>
           <button className="btn-primary btn-large">
             Schedule Consultation <ArrowRight size={20} />
