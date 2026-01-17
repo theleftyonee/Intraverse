@@ -130,16 +130,21 @@ const Home = () => {
       followerY += (mouseY - followerY) * 0.08;
       
       if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+        cursorRef.current.style.left = `${cursorX}px`;
+        cursorRef.current.style.top = `${cursorY}px`;
       }
       
       if (cursorFollowerRef.current) {
-        cursorFollowerRef.current.style.transform = `translate(${followerX}px, ${followerY}px)`;
+        cursorFollowerRef.current.style.left = `${followerX}px`;
+        cursorFollowerRef.current.style.top = `${followerY}px`;
       }
       
-      // Only continue animation if there's movement
-      if (Math.abs(mouseX - cursorX) > 0.1 || Math.abs(mouseY - cursorY) > 0.1) {
+      // Continue animation if there's movement (cursor or follower)
+      if (Math.abs(mouseX - cursorX) > 0.1 || Math.abs(mouseY - cursorY) > 0.1 ||
+          Math.abs(mouseX - followerX) > 0.1 || Math.abs(mouseY - followerY) > 0.1) {
         animationId = requestAnimationFrame(animateCursor);
+      } else {
+        animationId = null;
       }
     };
     
@@ -408,7 +413,7 @@ const Home = () => {
                   transform: `translateX(-${currentProject * 100}%)`
                 }}
               >
-                {projects.map((project) => (
+                {projects.map((project, index) => (
                   <div key={project.id} className="project-showcase-card">
                     <div className="project-preview-section">
                       <div className="browser-mockup">
@@ -426,7 +431,7 @@ const Home = () => {
                         <div className="browser-content">
                           <iframe
                             ref={(el) => (iframeRefs.current[project.id] = el)}
-                            src={currentProject === projects.indexOf(project) ? project.url : undefined}
+                            src={currentProject === index ? project.url : undefined}
                             title={project.name}
                             className="project-iframe"
                             loading="lazy"

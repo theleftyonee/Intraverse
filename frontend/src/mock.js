@@ -75,6 +75,51 @@ export const projects = [
       rating: "4.7/5"
     },
     technologies: ["Next.js", "TypeScript", "PostgreSQL", "Stripe"]
+  },
+  {
+    id: 3,
+    name: "Bridge",
+    tagline: "Empowering Student Success Through Engagement",
+    description: "Comprehensive student engagement platform featuring dashboard, chat, discussions, leaderboard, assessments, and AI-powered tools. Helping students stay connected and engaged with campus life and academics.",
+    category: "Student Engagement Platform",
+    url: "https://bridge-platform-umber.vercel.app/dashboard",
+    image: "",
+    metrics: {
+      users: "2,500+",
+      features: "10+",
+      rating: "4.9/5"
+    },
+    technologies: ["React", "Next.js", "TypeScript", "AI Integration"]
+  },
+  {
+    id: 4,
+    name: "Curate",
+    tagline: "Link Archiving, Categorization & Summarization",
+    description: "Intelligent link management tool that automatically categorizes, organizes and summarizes your links with smart metadata extraction. Transform your bookmark collection into an organized knowledge base.",
+    category: "Link Management Tool",
+    url: "https://curate-phi.vercel.app/",
+    image: "",
+    metrics: {
+      links: "10,000+",
+      accuracy: "95%+",
+      rating: "4.8/5"
+    },
+    technologies: ["React", "AI/ML", "Data Processing", "Web Scraping"]
+  },
+  {
+    id: 5,
+    name: "xPay",
+    tagline: "International Payment Gateway Built for Businesses Selling Globally",
+    description: "Leading international payment gateway helping businesses expand to 100+ countries with local compliance on auto-pilot. Achieve 95%+ payment success rates across 150+ currencies with the biggest selection of global payment methods.",
+    category: "Payment Gateway Platform",
+    url: "https://www.xpaycheckout.com/",
+    image: "",
+    metrics: {
+      companies: "1,000+",
+      countries: "100+",
+      "success rate": "95%+"
+    },
+    technologies: ["React", "Node.js", "Payment Processing", "API Integration"]
   }
 ];
 
@@ -117,7 +162,7 @@ export const stats = [
   {
     id: 1,
     label: "Projects Completed",
-    value: "246+"
+    value: "80+"
   },
   {
     id: 2,
@@ -132,7 +177,7 @@ export const stats = [
   {
     id: 4,
     label: "Countries Served",
-    value: "15+"
+    value: "6+"
   }
 ];
 
